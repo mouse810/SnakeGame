@@ -4,7 +4,6 @@ const board = document.getElementById('game-board')
 // Define game variables
 let snake = [{ x: 10, x: 10 }]
 
-
 // Draw game Map ,Snake ,food
 function draw() {
      board.innerHTML = '';
