@@ -147,6 +147,7 @@ document.addEventListener('keydown', handelKeyPress);
 
 // Increase Speed
 function increaseSpeed() {
+     console.log(increaseSpeed);
      if (gameSeedDelay > 150) {
           gameSeedDelay -= 5;
      } else if (gameSeedDelay > 100) {
