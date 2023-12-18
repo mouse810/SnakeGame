@@ -1,4 +1,4 @@
-// define Html element
+// Define HTML elements
 const board = document.getElementById('game-board');
 const instructionText = document.getElementById('instruction-text');
 const logo = document.getElementById('logo');
@@ -9,14 +9,13 @@ const highScoreText = document.getElementById('highScore');
 const gridSize = 20;
 let snake = [{ x: 10, y: 10 }];
 let food = generateFood();
+let highScore = 0;
 let direction = 'right';
 let gameInterval;
-let highScore = 0;
-let gameSeedDelay = 200;
+let gameSpeedDelay = 200;
 let gameStarted = false;
 
-
-// Draw game Map ,Snake ,food
+// Draw game map, snake, food
 function draw() {
      board.innerHTML = '';
      drawSnake();
@@ -24,31 +23,32 @@ function draw() {
      updateScore();
 }
 
-// Draw Snake
+// Draw snake
 function drawSnake() {
      snake.forEach((segment) => {
           const snakeElement = createGameElement('div', 'snake');
           setPosition(snakeElement, segment);
           board.appendChild(snakeElement);
-     })
+     });
 }
 
-// Create a snake And food cube/div
+// Create a snake or food cube/div
 function createGameElement(tag, className) {
      const element = document.createElement(tag);
      element.className = className;
      return element;
 }
 
-//Set Position of Snake and Food
-function setPosition(element, Position) {
-     element.style.gridColumn = Position.x;
-     element.style.gridRow = Position.y;
+// Set the position of snake or food
+function setPosition(element, position) {
+     element.style.gridColumn = position.x;
+     element.style.gridRow = position.y;
 }
-// Testing Draw Function
-// draw()
 
-// draw food Function 
+// Testing draw function
+// draw();
+
+// Draw food function
 function drawFood() {
      if (gameStarted) {
           const foodElement = createGameElement('div', 'food');
@@ -57,17 +57,16 @@ function drawFood() {
      }
 }
 
-
-// Generate Food
+// Generate food
 function generateFood() {
      const x = Math.floor(Math.random() * gridSize) + 1;
      const y = Math.floor(Math.random() * gridSize) + 1;
      return { x, y };
 }
 
-// Moving The Snake 
+// Moving the snake
 function move() {
-     const head = { ...snake[0] }
+     const head = { ...snake[0] };
      switch (direction) {
           case 'up':
                head.y--;
@@ -82,46 +81,47 @@ function move() {
                head.x++;
                break;
      }
+
      snake.unshift(head);
 
-     // snake.pop();
+     //   snake.pop();
 
-     // Snake Length
-     if (head.x === food.x && head.y == food.y) {
+     if (head.x === food.x && head.y === food.y) {
           food = generateFood();
           increaseSpeed();
-          clearInterval(); // clear past intervals
+          clearInterval(gameInterval); // Clear past interval
           gameInterval = setInterval(() => {
                move();
                checkCollision();
                draw();
-          }, gameSeedDelay)
+          }, gameSpeedDelay);
      } else {
-          snake.pop()
+          snake.pop();
      }
 }
+
 // Test moving
-
 // setInterval(() => {
-//      move();
-//      draw();
-// }, gameDelay);
+//   move(); // Move first
+//   draw(); // Then draw again new position
+// }, 200);
 
-// Game Start
+// Start game function
 function startGame() {
-     gameStarted = true; // keep track of running games
+     gameStarted = true; // Keep track of a running game
      instructionText.style.display = 'none';
      logo.style.display = 'none';
      gameInterval = setInterval(() => {
           move();
-          draw();
           checkCollision();
-     }, gameSeedDelay)
+          draw();
+     }, gameSpeedDelay);
 }
 
-// keyPress event listener
-function handelKeyPress(event) {
-     if ((!gameStarted && event.code === 'space') ||
+// Keypress event listener
+function handleKeyPress(event) {
+     if (
+          (!gameStarted && event.code === 'Space') ||
           (!gameStarted && event.key === ' ')
      ) {
           startGame();
@@ -133,29 +133,28 @@ function handelKeyPress(event) {
                case 'ArrowDown':
                     direction = 'down';
                     break;
-               case 'ArrowRight':
-                    direction = 'right';
-                    break;
                case 'ArrowLeft':
                     direction = 'left';
                     break;
+               case 'ArrowRight':
+                    direction = 'right';
+                    break;
           }
-
      }
 }
-document.addEventListener('keydown', handelKeyPress);
 
-// Increase Speed
+document.addEventListener('keydown', handleKeyPress);
+
 function increaseSpeed() {
-     console.log(increaseSpeed);
-     if (gameSeedDelay > 150) {
-          gameSeedDelay -= 5;
-     } else if (gameSeedDelay > 100) {
-          gameSeedDelay -= 3;
-     } else if (gameSeedDelay > 50) {
-          gameSeedDelay -= 2;
-     } else if (gameSeedDelay > 5) {
-          gameSeedDelay -= 1
+     //   console.log(gameSpeedDelay);
+     if (gameSpeedDelay > 150) {
+          gameSpeedDelay -= 5;
+     } else if (gameSpeedDelay > 100) {
+          gameSpeedDelay -= 3;
+     } else if (gameSpeedDelay > 50) {
+          gameSpeedDelay -= 2;
+     } else if (gameSpeedDelay > 25) {
+          gameSpeedDelay -= 1;
      }
 }
 
@@ -174,19 +173,18 @@ function checkCollision() {
 }
 
 function resetGame() {
+     updateHighScore();
+     stopGame();
      snake = [{ x: 10, y: 10 }];
      food = generateFood();
      direction = 'right';
-     gameSeedDelay = 200;
+     gameSpeedDelay = 200;
      updateScore();
-     updateHighScore();
-     stopGame();
 }
 
 function updateScore() {
      const currentScore = snake.length - 1;
      score.textContent = currentScore.toString().padStart(3, '0');
-
 }
 
 function stopGame() {
@@ -194,13 +192,13 @@ function stopGame() {
      gameStarted = false;
      instructionText.style.display = 'block';
      logo.style.display = 'block';
-};
+}
 
 function updateHighScore() {
-     const currentScore = snake.lastIndexOf - 1;
+     const currentScore = snake.length - 1;
      if (currentScore > highScore) {
           highScore = currentScore;
           highScoreText.textContent = highScore.toString().padStart(3, '0');
      }
      highScoreText.style.display = 'block';
-};
+}
