@@ -159,7 +159,6 @@ function increaseSpeed() {
      }
 }
 
-
 function checkCollision() {
      const head = snake[0];
 
